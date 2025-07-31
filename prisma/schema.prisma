@@ -21,4 +21,35 @@ model users {
     password  String
     createdAt DateTime  @default(now())
     updatedAt DateTime  @updatedAt
+
+    categories category[]
+    transactions transactions[]
   }
+
+model category {
+    id        String    @id @default(cuid())
+    category  String
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+
+    userId    String
+    user      users     @relation(fields: [userId], references: [id])
+
+    transactions transactions[]
+
+  }
+
+model transactions {
+    id        String    @id @default(cuid())
+    name      String 
+    nominal   Int 
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+
+    userId    String
+    categoryId String
+
+    user      users     @relation(fields: [userId], references: [id])
+    category  category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  } 
