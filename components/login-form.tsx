@@ -17,7 +17,7 @@ import React, { useState } from "react"
 import { signIn } from "next-auth/react"
 import { useRouter } from "next/navigation"
 
-
+import { Spinner } from "./ui/spinner";
 
 
 
@@ -94,6 +94,7 @@ export function LoginForm({
               </div>
               <div className="flex flex-col gap-3">
                 <Button type="submit" className="w-full">
+                  {isLoading && <Spinner className="text-white" />}
                   {isLoading ? "Loading" : "Login"}
                 </Button>
 

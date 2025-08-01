@@ -18,12 +18,14 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-
+import { Spinner } from "@/components/ui/spinner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash } from "lucide-react";
 import { useState, useEffect } from "react";
 import { formatDate } from "@/lib/utils";
+
+
 
 type transactions = {
   id: string,
@@ -50,6 +52,7 @@ export default function Page() {
   const [category, setCategory] = useState('');
   const [categoriesData, setCategoriesData] = useState([]);
   const [editId, setEditId] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
 
   function handleShowForm() {
@@ -67,10 +70,12 @@ export default function Page() {
   }
 
   async function showTransaction() {
+    setIsLoading(true)
     const raw = await fetch('/api/transactions');
     const data = await raw.json();
     console.log(data);
     setTransactionsData(data);
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -138,7 +143,7 @@ export default function Page() {
   }
 
   return (
-    <main className="h-full w-full border border-black rounded p-2.5">
+    <main className="h-full bg-gray-50 w-full border border-black rounded p-2.5 overflow-auto">
       <div>
         <h1 className="text-3xl">Transactions</h1>
         <div className="py-3">
@@ -175,80 +180,85 @@ export default function Page() {
           }
         </div>
         <div>
-          <Table>
-            <TableCaption>A list of your recent invoices.</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[100px]">No.</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Name Transaction</TableHead>
-                <TableHead>Nominal</TableHead>
-                <TableHead>Date</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {transactionsData.map((element: transactions, index) => {
-                return (
-                  <TableRow key={element.id}>
-                    <TableCell className="font-medium">{index + 1}</TableCell>
-                    {editId === element.id ? (
-                      <>
-                        <TableCell>
-                          {element.category.category}
-                        </TableCell>
-                        <TableCell>
-                          <Input
-                            value={editNameTransc}
-                            onChange={(e) => { setEditNameTransc(e.target.value) }}
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Input
-                            value={editNominalTransc}
-                            onChange={(e) => { setEditNominalTransc(e.target.value) }}
-                          />
-                        </TableCell>
-                        <TableCell>
-                          {formatDate(element.updatedAt)}
-                        </TableCell>
-                        <TableCell>
-                          <Button onClick={() => { handleUpdateTransactions(element.id) }}>
-                            Save
-                          </Button>
-                          <Button onClick={() => setEditId('')}>
-                            Cancel
-                          </Button>
-                        </TableCell>
-                      </>
-                    ) : (
-                      <>
-                        <TableCell>{element.category.category}</TableCell>
-                        <TableCell>{element.name}</TableCell>
-                        <TableCell>{`Rp. ${element.nominal.toLocaleString()}`}</TableCell>
-                        <TableCell>{formatDate(element.updatedAt)}</TableCell>
-                        <TableCell>
-                          <Button onClick={() => {
-                            setEditId(element.id)
-                            setEditNameTransc(element.name)
-                            setEditNominalTransc(element.nominal)
-                          }}
-                          >
-                            <Pencil />
-                          </Button>
-                          <Button onClick={() => { handleDeleteTransactions(element.id) }}>
-                            <Trash />
-                          </Button>
-                        </TableCell>
-                      </>
-                    )}
+          {isLoading ? (
+            <Spinner />
+          ) : (
+            <Table>
+              <TableCaption>A list of your recent invoices.</TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[100px]">No.</TableHead>
+                  <TableHead>Category</TableHead>
+                  <TableHead>Name Transaction</TableHead>
+                  <TableHead>Nominal</TableHead>
+                  <TableHead>Date</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {transactionsData.map((element: transactions, index) => {
+                  return (
+                    <TableRow key={element.id}>
+                      <TableCell className="font-medium">{index + 1}</TableCell>
+                      {editId === element.id ? (
+                        <>
+                          <TableCell>
+                            {element.category.category}
+                          </TableCell>
+                          <TableCell>
+                            <Input
+                              value={editNameTransc}
+                              onChange={(e) => { setEditNameTransc(e.target.value) }}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Input
+                              value={editNominalTransc}
+                              onChange={(e) => { setEditNominalTransc(e.target.value) }}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            {formatDate(element.updatedAt)}
+                          </TableCell>
+                          <TableCell>
+                            <Button onClick={() => { handleUpdateTransactions(element.id) }}>
+                              Save
+                            </Button>
+                            <Button onClick={() => setEditId('')}>
+                              Cancel
+                            </Button>
+                          </TableCell>
+                        </>
+                      ) : (
+                        <>
+                          <TableCell>{element.category.category}</TableCell>
+                          <TableCell>{element.name}</TableCell>
+                          <TableCell>{`Rp. ${element.nominal.toLocaleString()}`}</TableCell>
+                          <TableCell>{formatDate(element.updatedAt)}</TableCell>
+                          <TableCell>
+                            <Button onClick={() => {
+                              setEditId(element.id)
+                              setEditNameTransc(element.name)
+                              setEditNominalTransc(element.nominal)
+                            }}
+                            >
+                              <Pencil />
+                            </Button>
+                            <Button onClick={() => { handleDeleteTransactions(element.id) }}>
+                              <Trash />
+                            </Button>
+                          </TableCell>
+                        </>
+                      )}
 
-                  </TableRow>
+                    </TableRow>
+                  )
+                }
                 )
-              }
-              )
-              }
-            </TableBody>
-          </Table>
+                }
+              </TableBody>
+            </Table>
+          )}
+
         </div>
       </div>
     </main >

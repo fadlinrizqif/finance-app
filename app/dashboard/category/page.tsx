@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 import { Pencil, Trash } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 
 
 type categories = {
@@ -30,6 +31,7 @@ export default function Page() {
   const [category, setCategory] = useState('');
   const [editId, setEditId] = useState('');
   const [editCategory, setEditCategory] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   function handleShowForm() {
     setShowForm((toggle) => !toggle)
@@ -37,10 +39,12 @@ export default function Page() {
   }
 
   async function showCategory() {
+    setIsLoading(true)
     const raw = await fetch('/api/category');
     const data = await raw.json();
     console.log(data);
     setCategoriesData(data);
+    setIsLoading(false)
   }
 
   useEffect(() => {
@@ -106,6 +110,7 @@ export default function Page() {
                 placeholder="Input your category income"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
+                className="inline"
               />
               <Button onClick={handleAddCategory}>
                 Create Category
@@ -114,61 +119,66 @@ export default function Page() {
           }
         </div>
         <div className="border border-black p-2">
-          <Table>
-            <TableCaption>A list of your recent invoices.</TableCaption>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[100px]">No.</TableHead>
-                <TableHead>Category</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {categoriesData.map((element: categories, index) => {
-                return (
-                  <TableRow key={element.id}>
-                    <TableCell className="font-medium">{index + 1}</TableCell>
-                    {editId === element.id ? (
-                      <>
-                        <TableCell>
-                          <Input
-                            value={editCategory}
-                            onChange={(e) => { setEditCategory(e.target.value) }}
-                          />
-                        </TableCell>
-                        <TableCell>
-                          <Button onClick={() => handleUpdateCategory(editId)}>
-                            Save
-                          </Button>
-                          <Button onClick={() => setEditId('')}>
-                            Cancel
-                          </Button>
-                        </TableCell>
-                      </>
-                    ) : (
-                      <>
-                        <TableCell>{element.category}</TableCell>
-                        <TableCell>
-                          <Button onClick={() => {
-                            setEditId(element.id)
-                            setEditCategory(element.category)
-                          }}
-                          >
-                            <Pencil />
-                          </Button>
-                          <Button onClick={() => { handleDeleteCategory(element.id) }}>
-                            <Trash />
-                          </Button>
-                        </TableCell>
-                      </>
-                    )}
+          {isLoading ? (
+            <Spinner />
+          ) : (
+            <Table>
+              <TableCaption>A list of your recent invoices.</TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[100px]">No.</TableHead>
+                  <TableHead>Category</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {categoriesData.map((element: categories, index) => {
+                  return (
+                    <TableRow key={element.id}>
+                      <TableCell className="font-medium">{index + 1}</TableCell>
+                      {editId === element.id ? (
+                        <>
+                          <TableCell>
+                            <Input
+                              value={editCategory}
+                              onChange={(e) => { setEditCategory(e.target.value) }}
+                            />
+                          </TableCell>
+                          <TableCell>
+                            <Button onClick={() => handleUpdateCategory(editId)}>
+                              Save
+                            </Button>
+                            <Button onClick={() => setEditId('')}>
+                              Cancel
+                            </Button>
+                          </TableCell>
+                        </>
+                      ) : (
+                        <>
+                          <TableCell>{element.category}</TableCell>
+                          <TableCell>
+                            <Button onClick={() => {
+                              setEditId(element.id)
+                              setEditCategory(element.category)
+                            }}
+                            >
+                              <Pencil />
+                            </Button>
+                            <Button onClick={() => { handleDeleteCategory(element.id) }}>
+                              <Trash />
+                            </Button>
+                          </TableCell>
+                        </>
+                      )}
 
-                  </TableRow>
+                    </TableRow>
+                  )
+                }
                 )
-              }
-              )
-              }
-            </TableBody>
-          </Table>
+                }
+              </TableBody>
+            </Table>
+          )}
+
         </div>
       </div>
     </main>
