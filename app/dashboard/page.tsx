@@ -108,7 +108,7 @@ export default function Dashboard() {
 
 
   return (
-    <main className="h-full bg-gray-50 w-full border border-black rounded p-2.5 overflow-auto">
+    <main className="h-full bg-gray-50 w-full  rounded p-2.5 m-2 overflow-auto">
       <div>
         <h1 className="text-3xl">Dashboard</h1>
         <div className="flex gap-2 mt-2">
@@ -121,22 +121,7 @@ export default function Dashboard() {
             </CardContent>
 
           </Card>
-          {/*<Card className="w-[50%]">
-            <CardHeader>
-              <CardTitle>Pengeluaran Bulanan</CardTitle>
-            </CardHeader>
-            <CardContent className="h-[300px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={showData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip formatter={(value: any) => `Rp ${value.toLocaleString("id-ID")}`} />
-                  <Bar dataKey="total" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>*/}
+
 
           {isLoading ? (
             <Spinner />
@@ -175,7 +160,7 @@ export default function Dashboard() {
               <Spinner />
             ) : (
               <Table>
-                <TableCaption>A list of your recent invoices.</TableCaption>
+                <TableCaption>A list of your recent transactions.</TableCaption>
                 <TableHeader>
                   <TableRow>
                     <TableHead className="w-[100px]">No.</TableHead>

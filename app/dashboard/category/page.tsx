@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-
+import { Card } from "@/components/ui/card";
 import { Pencil, Trash } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 
@@ -98,87 +98,91 @@ export default function Page() {
 
 
   return (
-    <main className="h-full bg-gray-50 w-full border border-black rounded p-2.5 overflow-auto">
+    <main className="h-full bg-gray-50 w-full  rounded p-2.5 m-2 overflow-auto">
       <div>
         <h1 className="text-3xl">Categroy Income</h1>
         <div className="py-3">
           <Button onClick={handleShowForm} >New Category</Button>
 
           {showForm &&
-            <div>
-              <Input
-                placeholder="Input your category income"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-                className="inline"
-              />
-              <Button onClick={handleAddCategory}>
-                Create Category
-              </Button>
-            </div>
+            <Card className="mt-2">
+              <div className="flex gap-2">
+                <Input
+                  placeholder="Input your category income"
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+
+                />
+                <Button onClick={handleAddCategory}>
+                  Create Category
+                </Button>
+              </div>
+            </Card >
           }
+
         </div>
-        <div className="border border-black p-2">
-          {isLoading ? (
-            <Spinner />
-          ) : (
-            <Table>
-              <TableCaption>A list of your recent invoices.</TableCaption>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[100px]">No.</TableHead>
-                  <TableHead>Category</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {categoriesData.map((element: categories, index) => {
-                  return (
-                    <TableRow key={element.id}>
-                      <TableCell className="font-medium">{index + 1}</TableCell>
-                      {editId === element.id ? (
-                        <>
-                          <TableCell>
-                            <Input
-                              value={editCategory}
-                              onChange={(e) => { setEditCategory(e.target.value) }}
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Button onClick={() => handleUpdateCategory(editId)}>
-                              Save
-                            </Button>
-                            <Button onClick={() => setEditId('')}>
-                              Cancel
-                            </Button>
-                          </TableCell>
-                        </>
-                      ) : (
-                        <>
-                          <TableCell>{element.category}</TableCell>
-                          <TableCell>
-                            <Button onClick={() => {
-                              setEditId(element.id)
-                              setEditCategory(element.category)
-                            }}
-                            >
-                              <Pencil />
-                            </Button>
-                            <Button onClick={() => { handleDeleteCategory(element.id) }}>
-                              <Trash />
-                            </Button>
-                          </TableCell>
-                        </>
-                      )}
+        <div className="p-2">
+          <Card className="px-2">
+            {isLoading ? (
+              <Spinner />
+            ) : (
+              <Table>
+                <TableCaption>A list of your categories.</TableCaption>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[100px]">No.</TableHead>
+                    <TableHead>Category</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {categoriesData.map((element: categories, index) => {
+                    return (
+                      <TableRow key={element.id}>
+                        <TableCell className="font-medium">{index + 1}</TableCell>
+                        {editId === element.id ? (
+                          <>
+                            <TableCell>
+                              <Input
+                                value={editCategory}
+                                onChange={(e) => { setEditCategory(e.target.value) }}
+                              />
+                            </TableCell>
+                            <TableCell className="flex gap-2">
+                              <Button onClick={() => handleUpdateCategory(editId)}>
+                                Save
+                              </Button>
+                              <Button onClick={() => setEditId('')}>
+                                Cancel
+                              </Button>
+                            </TableCell>
+                          </>
+                        ) : (
+                          <>
+                            <TableCell>{element.category}</TableCell>
+                            <TableCell className="flex gap-2">
+                              <Button onClick={() => {
+                                setEditId(element.id)
+                                setEditCategory(element.category)
+                              }}
+                              >
+                                <Pencil />
+                              </Button>
+                              <Button onClick={() => { handleDeleteCategory(element.id) }}>
+                                <Trash />
+                              </Button>
+                            </TableCell>
+                          </>
+                        )}
 
-                    </TableRow>
+                      </TableRow>
+                    )
+                  }
                   )
-                }
-                )
-                }
-              </TableBody>
-            </Table>
-          )}
-
+                  }
+                </TableBody>
+              </Table>
+            )}
+          </Card>
         </div>
       </div>
     </main>

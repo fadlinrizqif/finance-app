@@ -13,6 +13,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Link from "next/link"
 
+import { Spinner } from "./ui/spinner";
+
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -103,6 +105,7 @@ export function SignUpForm({
               </div>
               <div className="flex flex-col gap-3">
                 <Button type="submit" className="w-full">
+                  {isLoading && <Spinner className="text-white" size="small" />}
                   {isLoading ? "Loading" : "Register"}
                 </Button>
 
@@ -110,9 +113,10 @@ export function SignUpForm({
             </div>
             <div className="mt-4 text-center text-sm">
               Already have the account{" "}
-              <a href="/signin" className="underline underline-offset-4">
-                Sign up
-              </a>
+              <Link href="/signin" className="underline underline-offset-4">
+                Sign in
+              </Link>
+
             </div>
           </form>
         </CardContent>

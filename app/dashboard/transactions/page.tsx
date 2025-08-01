@@ -18,6 +18,8 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
+
+import { Card } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -84,7 +86,7 @@ export default function Page() {
   }, [])
 
   async function handleAddTransactions() {
-    if (!nameTransc || !nominalTransc) {
+    if (!nameTransc || !nominalTransc || !category) {
       return;
     }
 
@@ -143,122 +145,127 @@ export default function Page() {
   }
 
   return (
-    <main className="h-full bg-gray-50 w-full border border-black rounded p-2.5 overflow-auto">
+    <main className="h-full bg-gray-50 w-full rounded p-2.5 m-2 overflow-auto">
       <div>
         <h1 className="text-3xl">Transactions</h1>
         <div className="py-3">
-          <Button onClick={handleShowForm} >New Transaction</Button>
+          <Button className="pt-2 -mb-2" onClick={handleShowForm} >New Transaction</Button>
 
           {showForm &&
-            <div>
-              <Input
-                placeholder="Input your name transaction"
-                value={nameTransc}
-                onChange={(e) => setNameTransc(e.target.value)}
-              />
-              <Input
-                placeholder="Input your nominal value"
-                value={nominalTransc}
-                onChange={(e) => setNominalTransc(e.target.value)}
-              />
-              <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Category" />
-                </SelectTrigger>
-                <SelectContent>
-                  {categoriesData.map((element: categories, index) => {
-                    return (
-                      <SelectItem key={element.id} value={element.id}>{element.category}</SelectItem>
-                    );
-                  })}
-                </SelectContent>
-              </Select>
-              <Button onClick={handleAddTransactions}>
-                Create Transaction
-              </Button>
-            </div>
+            <Card className="px-2">
+              <div className="flex flex-col gap-2">
+                <Select value={category} onValueChange={setCategory}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categoriesData.map((element: categories, index) => {
+                      return (
+                        <SelectItem key={element.id} value={element.id}>{element.category}</SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+                <Input
+                  placeholder="Input your name transaction"
+                  value={nameTransc}
+                  onChange={(e) => setNameTransc(e.target.value)}
+                />
+                <Input
+                  placeholder="Input your nominal value"
+                  value={nominalTransc}
+                  onChange={(e) => setNominalTransc(e.target.value)}
+                />
+                <Button onClick={handleAddTransactions}>
+                  Create Transaction
+                </Button>
+              </div>
+            </Card>
           }
+
         </div>
         <div>
-          {isLoading ? (
-            <Spinner />
-          ) : (
-            <Table>
-              <TableCaption>A list of your recent invoices.</TableCaption>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-[100px]">No.</TableHead>
-                  <TableHead>Category</TableHead>
-                  <TableHead>Name Transaction</TableHead>
-                  <TableHead>Nominal</TableHead>
-                  <TableHead>Date</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {transactionsData.map((element: transactions, index) => {
-                  return (
-                    <TableRow key={element.id}>
-                      <TableCell className="font-medium">{index + 1}</TableCell>
-                      {editId === element.id ? (
-                        <>
-                          <TableCell>
-                            {element.category.category}
-                          </TableCell>
-                          <TableCell>
-                            <Input
-                              value={editNameTransc}
-                              onChange={(e) => { setEditNameTransc(e.target.value) }}
-                            />
-                          </TableCell>
-                          <TableCell>
-                            <Input
-                              value={editNominalTransc}
-                              onChange={(e) => { setEditNominalTransc(e.target.value) }}
-                            />
-                          </TableCell>
-                          <TableCell>
-                            {formatDate(element.updatedAt)}
-                          </TableCell>
-                          <TableCell>
-                            <Button onClick={() => { handleUpdateTransactions(element.id) }}>
-                              Save
-                            </Button>
-                            <Button onClick={() => setEditId('')}>
-                              Cancel
-                            </Button>
-                          </TableCell>
-                        </>
-                      ) : (
-                        <>
-                          <TableCell>{element.category.category}</TableCell>
-                          <TableCell>{element.name}</TableCell>
-                          <TableCell>{`Rp. ${element.nominal.toLocaleString()}`}</TableCell>
-                          <TableCell>{formatDate(element.updatedAt)}</TableCell>
-                          <TableCell>
-                            <Button onClick={() => {
-                              setEditId(element.id)
-                              setEditNameTransc(element.name)
-                              setEditNominalTransc(element.nominal)
-                            }}
-                            >
-                              <Pencil />
-                            </Button>
-                            <Button onClick={() => { handleDeleteTransactions(element.id) }}>
-                              <Trash />
-                            </Button>
-                          </TableCell>
-                        </>
-                      )}
+          <Card className="px-2">
+            {isLoading ? (
+              <Spinner />
+            ) : (
 
-                    </TableRow>
+              <Table>
+                <TableCaption>A list of your recent transactions.</TableCaption>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-[100px]">No.</TableHead>
+                    <TableHead>Category</TableHead>
+                    <TableHead>Name Transaction</TableHead>
+                    <TableHead>Nominal</TableHead>
+                    <TableHead>Date</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {transactionsData.map((element: transactions, index) => {
+                    return (
+                      <TableRow key={element.id}>
+                        <TableCell className="font-medium">{index + 1}</TableCell>
+                        {editId === element.id ? (
+                          <>
+                            <TableCell>
+                              {element.category.category}
+                            </TableCell>
+                            <TableCell>
+                              <Input
+                                value={editNameTransc}
+                                onChange={(e) => { setEditNameTransc(e.target.value) }}
+                              />
+                            </TableCell>
+                            <TableCell>
+                              <Input
+                                value={editNominalTransc}
+                                onChange={(e) => { setEditNominalTransc(e.target.value) }}
+                              />
+                            </TableCell>
+                            <TableCell>
+                              {formatDate(element.updatedAt)}
+                            </TableCell>
+                            <TableCell className="flex gap-2">
+                              <Button onClick={() => { handleUpdateTransactions(element.id) }}>
+                                Save
+                              </Button>
+                              <Button onClick={() => setEditId('')}>
+                                Cancel
+                              </Button>
+                            </TableCell>
+                          </>
+                        ) : (
+                          <>
+                            <TableCell>{element.category.category}</TableCell>
+                            <TableCell>{element.name}</TableCell>
+                            <TableCell>{`Rp. ${element.nominal.toLocaleString()}`}</TableCell>
+                            <TableCell>{formatDate(element.updatedAt)}</TableCell>
+                            <TableCell className="flex gap-2">
+                              <Button onClick={() => {
+                                setEditId(element.id)
+                                setEditNameTransc(element.name)
+                                setEditNominalTransc(element.nominal)
+                              }}
+                              >
+                                <Pencil />
+                              </Button>
+                              <Button onClick={() => { handleDeleteTransactions(element.id) }}>
+                                <Trash />
+                              </Button>
+                            </TableCell>
+                          </>
+                        )}
+
+                      </TableRow>
+                    )
+                  }
                   )
-                }
-                )
-                }
-              </TableBody>
-            </Table>
-          )}
-
+                  }
+                </TableBody>
+              </Table>
+            )}
+          </Card>
         </div>
       </div>
     </main >
